@@ -37,9 +37,9 @@ void setup() {
   lcd.print("Water Level: ");
 
   ack = EEPROM.read(0);
-  workingSensor();
-
+  
   lastActivityTime = millis();
+  workingSensor();
 }
 
 void loop() {
@@ -77,7 +77,6 @@ void loop() {
       ack = true;
     }
   }
-
   if (waterLevel < MIN_LEVEL && ack == true) {
     EEPROM.write(0, false);
     ack = false;
@@ -86,23 +85,16 @@ void loop() {
   if (!digitalRead(button)) { 
     workingSensor();
 
-    lcd.setCursor(0, 1);
-    lcd.print("Refreshed >*_*<");
-
-    lcd.setCursor(13, 0);
-    lcd.print("   ");
-    lcd.setCursor(13, 0);
-    lcd.print(waterLevel);
-
-    delay(1000);
-    lcd.setCursor(0, 1);
-    lcd.print("                ");
-
     lastActivityTime = millis();
     if (!lcdIsOn) {
       lcd.backlight();
       lcdIsOn = true;
     }
+    lcd.setCursor(0, 1);
+    lcd.print("Refreshed >*_*<");
+    delay(1000);
+    lcd.setCursor(0, 1);
+    lcd.print("                ");
   }
 
   if (additionalWaterLevel > 100) { 
@@ -148,6 +140,10 @@ void workingSensor() {
   }
 
   waterLevel = minWaterLevel;
+  lcd.setCursor(13, 0);
+  lcd.print("   ");
+  lcd.setCursor(13, 0);
+  lcd.print(waterLevel);
 
   //// these are optional 
  /*
