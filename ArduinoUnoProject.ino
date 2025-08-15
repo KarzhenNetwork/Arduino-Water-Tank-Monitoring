@@ -17,6 +17,7 @@ int additionalWaterLevel = 0;
 
 bool ack = 0;
 bool lcdIsOn = true;
+bool isHigh = false;
 
 unsigned long Timer = 0, highTimer = 0, buzzerTimer = 0;
 unsigned long normalTimer = 0, lowTimer = 0;
@@ -45,7 +46,7 @@ void setup() {
 void loop() {
   Timer = millis();
                                              // 1000ms = 1s | 5000ms = 5s | 25000ms = 25s
-  if (waterLevel >= 90 && waterLevel <= 100) {
+  if (waterLevel >= 90) {
     if (Timer > highTimer + 10000) { // كل 10 ثوانٍ عند الارتفاع | هەموو 10 چرکەیەک لەکاتی بەرزبوونەوەی ئاو
       workingSensor();
       highTimer = Timer;
@@ -113,12 +114,26 @@ void loop() {
     lcd.noBacklight();
     lcdIsOn = false;
   }
+
+  if(waterLevel >= 50) {
+    isHigh = true;
+  }
+  else {
+    isHigh = false;
+  }
 }
 
 void workingSensor() {
   int minWaterLevel = 150;
+  int numLoop = 0;
 
-  for (int i = 0; i < 10; i++) {
+  if(isHigh) { // if water level is higher than 50%, it will send the signal of the sensor 10 times.
+    numLoop = 10;
+  } else{      // if water level is higher than 50%, it will send the signal of the sensor 23 times.
+    numLoop = 23;
+  }
+
+  for (int i = 0; i < numLoop; i++) {
     digitalWrite(triggerPin, LOW);
     delayMicroseconds(2);
     digitalWrite(triggerPin, HIGH);
